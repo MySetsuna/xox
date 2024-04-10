@@ -8,12 +8,10 @@
     "build": "tsc && vite build",
     "css": "npx tailwindcss -i ./src/input.css -o ./src/index.css --watch",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "css": "npx tailwindcss -i ./src/input.css -o ./src/index.css --watch",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.18",
-    "@heroicons/react": "^2.1.3",
+    "@radix-ui/themes": "^3.0.2",
     "classnames": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
