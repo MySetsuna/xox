@@ -1,3 +1,4 @@
+import { Button, Link, Theme, ThemePanel } from "@radix-ui/themes";
 import classNames from "classnames";
 import { useForm, SubmitHandler } from "react-hook-form";
 type Inputs = {
@@ -18,7 +19,20 @@ export default function App() {
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <>
+    <Theme
+      accentColor="crimson"
+      grayColor="sand"
+      radius="large"
+      scaling="95%"
+      appearance="light"
+    >
+      <Button className=" bg-red-a2">
+        8888<Link>7777777</Link>
+      </Button>
+      <Button className=" bg-red-a12" highContrast>
+        8888<Link>7777777</Link>
+      </Button>
+      <ThemePanel onSubmit={(data) => console.log(data, "7777777777")} />
       <a
         href="#"
         className="has-[.project-name:hover]:bg-red-600 block max-w-xs mx-auto rounded-lg p-6 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-500 hover:ring-sky-500"
@@ -33,7 +47,7 @@ export default function App() {
                 body: text,
                 icon: img,
               });
-              notification.onshow=()=>window.location.reload()
+              notification.onshow = () => window.location.reload();
             });
           }}
         >
@@ -96,6 +110,6 @@ export default function App() {
           提交
         </button>
       </form>
-    </>
+    </Theme>
   );
 }
