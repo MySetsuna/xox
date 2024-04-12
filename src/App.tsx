@@ -1,6 +1,23 @@
-import { Button, Link, Theme, ThemePanel } from '@radix-ui/themes';
+import {
+  Avatar,
+  Box,
+  Button,
+  ContextMenu,
+  Flex,
+  Heading,
+  HoverCard,
+  Link,
+  Skeleton,
+  Slot,
+  Text,
+  Theme,
+  ThemePanel,
+  VisuallyHidden,
+} from '@radix-ui/themes';
 import classNames from 'classnames';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { invoke } from '@tauri-apps/api';
+import { isTauri } from '@/uitls';
 type Inputs = {
   example: string;
   exampleRequired: string;
@@ -14,7 +31,11 @@ export default function App() {
     formState: { errors },
   } = useForm<Inputs>({ mode: 'all' });
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
-
+  if (isTauri()) {
+    invoke('greet', { name: 'World' })
+      // `invoke` 返回异步函数
+      .then((response) => console.log(response));
+  }
   console.log(watch('example')); // watch input value by passing the name of it
 
   return (
@@ -26,6 +47,91 @@ export default function App() {
       scaling="95%"
       appearance="light"
     >
+      <VisuallyHidden>44444444444444444444444444</VisuallyHidden>
+      <Slot
+        onClick={(event) => {
+          if (!event.defaultPrevented)
+            console.log('Not logged because default is prevented.');
+          if (isTauri()) {
+            invoke('greet', { name: 'jxk' })
+              // `invoke` 返回异步函数
+              .then((response) => console.log(response));
+          }
+        }}
+      >
+        <button>333333333333333</button>
+      </Slot>
+      <Text>
+        <Skeleton>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque
+          felis tellus, efficitur id convallis a, viverra eget libero. Nam magna
+          erat, fringilla sed commodo sed, aliquet nec magna.
+        </Skeleton>
+      </Text>
+      <Text>
+        Follow{' '}
+        <HoverCard.Root>
+          <HoverCard.Trigger>
+            <Link href="#" target="_blank">
+              @radix_ui
+            </Link>
+          </HoverCard.Trigger>
+          <HoverCard.Content maxWidth="300px">
+            <Flex gap="4">
+              <Avatar
+                size="3"
+                fallback="R"
+                radius="full"
+                src="https://pbs.twimg.com/profile_images/1337055608613253126/r_eiMp2H_400x400.png"
+              />
+              <Box>
+                <Heading size="3" as="h3">
+                  Radix
+                </Heading>
+                <Text as="div" size="2" color="gray" mb="2">
+                  @radix_ui
+                </Text>
+                <Text as="div" size="2">
+                  React components, icons, and colors for building high-quality,
+                  accessible UI.
+                </Text>
+              </Box>
+            </Flex>
+          </HoverCard.Content>
+        </HoverCard.Root>{' '}
+        for updates.
+      </Text>
+      <ContextMenu.Root>
+        <ContextMenu.Trigger>
+          <Box height="400px" width="500px" className="bg-yellow-200 rounded">
+            444
+          </Box>
+        </ContextMenu.Trigger>
+        <ContextMenu.Content>
+          <ContextMenu.Item shortcut="⌘ E">Edit</ContextMenu.Item>
+          <ContextMenu.Item shortcut="⌘ D">Duplicate</ContextMenu.Item>
+          <ContextMenu.Separator />
+          <ContextMenu.Item shortcut="⌘ N">Archive</ContextMenu.Item>
+
+          <ContextMenu.Sub>
+            <ContextMenu.SubTrigger>More</ContextMenu.SubTrigger>
+            <ContextMenu.SubContent>
+              <ContextMenu.Item>Move to project…</ContextMenu.Item>
+              <ContextMenu.Item>Move to folder…</ContextMenu.Item>
+              <ContextMenu.Separator />
+              <ContextMenu.Item>Advanced options…</ContextMenu.Item>
+            </ContextMenu.SubContent>
+          </ContextMenu.Sub>
+
+          <ContextMenu.Separator />
+          <ContextMenu.Item>Share</ContextMenu.Item>
+          <ContextMenu.Item>Add to favorites</ContextMenu.Item>
+          <ContextMenu.Separator />
+          <ContextMenu.Item shortcut="⌘ ⌫" color="red">
+            Delete
+          </ContextMenu.Item>
+        </ContextMenu.Content>
+      </ContextMenu.Root>
       <Button className=" bg-red-a2">
         8888<Link>7777777</Link>
       </Button>
