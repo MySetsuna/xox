@@ -21,13 +21,17 @@
     "@types/node": "^20.12.7",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.11",
+    "lodash": "^4.17.21",
     "re-resizable": "^6.9.17",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.2",
-    "react-window": "^1.8.10"
+    "react-window": "^1.8.10",
+    "reactflow": "^11.11.3",
+    "scrollmirror": "^0.1.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.4",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-window": "^1.8.8",

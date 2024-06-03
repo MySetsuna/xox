@@ -12,6 +12,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { GanttTable } from '../GanttTable/GanttTable';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Resizable } from 're-resizable';
+import { ReactFlowProvider } from 'reactflow';
 
 type T = GanttLayoutProps['data'][0];
 
@@ -122,29 +123,31 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
       style={style}
       ref={flowBoxRef}
     >
-      <Resizable
-        size={{ width: tableWidth }}
-        onResize={(_e, _d, element) => setTableWidth(element.offsetWidth)}
-        minWidth={100}
-        maxWidth={'80%'}
-        enable={{ right: true }}
-      >
-        <GanttTable
-          totalHeaderHeight={totalHeaderHeight}
-          rows={rows}
-          columns={tableColumns}
-          headerHeight={headerHeight}
-          scrollHeight={scrollHeight}
-          scrollWidth={tableScrollWidth}
-          headerGroups={tableHeaderGroups}
-          rowHeight={rowHeight}
-          visibleBodyHeight={visibleBodyHeight}
-          bodyHeight={flowBoxRef.current?.clientHeight ?? 0}
-          groupGap={groupGap}
-          boxHeight={boxHeight}
-          columnPinning={tableColumnPinning}
-        />
-      </Resizable>
+      <ReactFlowProvider>
+        <Resizable
+          size={{ width: tableWidth }}
+          onResize={(_e, _d, element) => setTableWidth(element.offsetWidth)}
+          minWidth={100}
+          maxWidth={'80%'}
+          enable={{ right: true }}
+        >
+          <GanttTable
+            totalHeaderHeight={totalHeaderHeight}
+            rows={rows}
+            columns={tableColumns}
+            headerHeight={headerHeight}
+            scrollHeight={scrollHeight}
+            scrollWidth={tableScrollWidth}
+            headerGroups={tableHeaderGroups}
+            rowHeight={rowHeight}
+            visibleBodyHeight={visibleBodyHeight}
+            bodyHeight={flowBoxRef.current?.clientHeight ?? 0}
+            groupGap={groupGap}
+            boxHeight={boxHeight}
+            columnPinning={tableColumnPinning}
+          />
+        </Resizable>
+      </ReactFlowProvider>
     </div>
   );
 });
