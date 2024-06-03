@@ -14,31 +14,26 @@ import {
   ThemePanel,
   VisuallyHidden,
 } from '@radix-ui/themes';
-import classNames from 'classnames';
-import { useForm, SubmitHandler } from 'react-hook-form';
 import { invoke } from '@tauri-apps/api';
 import { isTauri } from '@/uitls';
 import { GanttLayout } from './components/GanttLayout/GanttLayout';
 import { makeTask } from './examples/makeData';
-type Inputs = {
-  example: string;
-  exampleRequired: string;
-};
+
 const mdata = makeTask(50);
 export default function App() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<Inputs>({ mode: 'all' });
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   watch,
+  //   formState: { errors },
+  // } = useForm<Inputs>({ mode: 'all' });
+  // const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
   if (isTauri()) {
     invoke('greet', { name: 'World' })
       // `invoke` 返回异步函数
       .then((response) => console.log(response));
   }
-  console.log(watch('example')); // watch input value by passing the name of it
+  // console.log(watch('example')); // watch input value by passing the name of it
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
@@ -202,57 +197,6 @@ export default function App() {
           Create a new project from a variety of starting templates.
         </p>
       </a>
-      <form onSubmit={handleSubmit(onSubmit)} className=" block">
-        {/* register your input into the hook by invoking the "register" function */}
-        <label className="block">
-          <span className="block text-sm font-medium text-slate-700">
-            Username
-          </span>
-          <input
-            className={classNames(
-              `mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-            focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
-            disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
-            `,
-              errors.example &&
-                `border-pink-500 text-pink-600
-            focus:border-pink-500 focus:ring-pink-500`,
-            )}
-            defaultValue="test"
-            {...register('example', {
-              maxLength: { value: 6, message: 'maxLength: 6' },
-            })}
-            required
-          />
-          {errors.example && <span>{errors.example.message}</span>}
-        </label>
-        {/* include validation with required or other standard HTML validation rules */}
-        <input
-          className={classNames(
-            `" mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
-          disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"`,
-            errors.exampleRequired &&
-              `border-pink-500 text-pink-600
-          focus:border-pink-500 focus:ring-pink-500`,
-          )}
-          {...register('exampleRequired', { required: true })}
-        />
-        {/* errors will return when field validation fails  */}
-        {errors.exampleRequired && <span>This field is required</span>}
-
-        <button
-          type="submit"
-          className={classNames(
-            'hover:cursor-pointer border-pink-500',
-            (!!errors.example || !!errors.exampleRequired) &&
-              'hover:cursor-not-allowed',
-          )}
-          disabled={!!errors.example || !!errors.exampleRequired}
-        >
-          提交
-        </button>
-      </form>
     </Theme>
   );
 }
