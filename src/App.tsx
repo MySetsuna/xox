@@ -18,11 +18,13 @@ import classNames from 'classnames';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { invoke } from '@tauri-apps/api';
 import { isTauri } from '@/uitls';
+import { GanttLayout } from './components/GanttLayout/GanttLayout';
+import { makeTask } from './examples/makeData';
 type Inputs = {
   example: string;
   exampleRequired: string;
 };
-
+const mdata = makeTask(50);
 export default function App() {
   const {
     register,
@@ -46,7 +48,42 @@ export default function App() {
       radius="large"
       scaling="95%"
       appearance="light"
+      className="scrollbar"
     >
+      <GanttLayout
+        columns={[
+          {
+            id: 'index',
+            accessorFn: (_data, index) => index + 1,
+            size: 80,
+            cell: (data) => (
+              <div className="text-blue-500 h-full">
+                {data.getValue<number>()}
+              </div>
+            ),
+          },
+          { id: 'artStoryId', accessorKey: 'artStoryId', size: 80 },
+          { id: 'startAt', accessorKey: 'startAt', size: 150 },
+          { id: 'endAt', accessorKey: 'endAt', size: 150 },
+          { id: 'handler', accessorKey: 'handler', size: 100 },
+          {
+            id: 'priority',
+            accessorKey: 'priority',
+            size: 100,
+            aggregatedCell(props) {
+              return props.renderValue();
+            },
+          },
+        ]}
+        data={mdata}
+        headerHeight={[20]}
+        overscan={5}
+        rowHeight={30}
+        tableColumnPinning={{
+          left: ['index', 'artStoryId'],
+          right: ['priority'],
+        }}
+      />
       <VisuallyHidden>44444444444444444444444444</VisuallyHidden>
       <Slot
         onClick={(event) => {
