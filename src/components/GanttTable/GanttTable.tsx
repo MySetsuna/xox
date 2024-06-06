@@ -2,35 +2,29 @@ import { GanttTableProps } from '@/types';
 import { Row, flexRender } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import classNames from 'classnames';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import ScrollMirror from 'scrollmirror';
 
 export const GanttTable = (props: GanttTableProps) => {
   const {
     rows,
     headerGroups,
     headerHeight,
-    scrollHeight,
     scrollWidth,
     rowHeight,
     totalHeaderHeight,
-    bodyHeight,
+    boxHeight,
     visibleBodyHeight,
     columns,
     groupGap = 0,
-    boxHeight,
+    scrollTotalHeight,
+    scrollBodyHeight,
     columnPinning = {},
+    rowVirtualizer,
   } = props;
   const tableBoxRef = useRef<HTMLDivElement>(null);
-
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableBoxRef.current,
-    estimateSize: () => {
-      // const row = rows[index];
-      return rowHeight;
-    },
-    overscan: 10,
-  });
+  const tableHeaderBoxRef = useRef<HTMLDivElement>(null);
+  const tableScrollXBarBoxRef = useRef<HTMLDivElement>(null);
 
   const columnVirtualizer = useVirtualizer({
     horizontal: true,
@@ -40,21 +34,27 @@ export const GanttTable = (props: GanttTableProps) => {
     overscan: 5,
   });
 
+  useEffect(() => {
+    if (
+      tableHeaderBoxRef.current &&
+      tableBoxRef.current &&
+      tableScrollXBarBoxRef.current
+    ) {
+      new ScrollMirror([
+        tableHeaderBoxRef.current,
+        tableBoxRef.current,
+        tableScrollXBarBoxRef.current,
+      ]);
+    }
+  }, []);
+
   return (
-    <div
-      className={classNames(
-        'overflow-auto w-full scrollbar scrollbar-hide-y',
-        'gantt-scroll',
-        'gantt-table',
-      )}
-      ref={tableBoxRef}
-      style={{ height: boxHeight }}
-    >
+    <>
       <div
-        className={classNames('gantt-table-container')}
-        style={{ height: scrollHeight, width: `max(${scrollWidth}px, 100%)` }}
+        className="gantt-table-header flex sticky top-0 z-10 flex-col bg-white overflow-x-auto scrollbar-hide-x"
+        ref={tableHeaderBoxRef}
       >
-        <div className="gantt-table-header flex sticky top-0 z-10 flex-col bg-white">
+        <div style={{ width: `max(${scrollWidth}px, 100%)` }}>
           {headerGroups.map((headerGroup, index) => {
             const height =
               headerHeight?.[index] || headerHeight?.[0] || rowHeight;
@@ -106,11 +106,37 @@ export const GanttTable = (props: GanttTableProps) => {
             );
           })}
         </div>
+      </div>
+      <div
+        className="sticky h-0 overflow-visible  z-[100]"
+        style={{ top: boxHeight - 9 }}
+      >
+        <div
+          className="gantt-table-scroll-x flex flex-col bg-white overflow-x-auto w-full scrollbar scrollbar-hide-y"
+          ref={tableScrollXBarBoxRef}
+        >
+          <div
+            style={{
+              width: `max(${scrollWidth}px, 100%)`,
+              height: 1,
+            }}
+          ></div>
+        </div>
+      </div>
+
+      <div
+        className={classNames(
+          ' scrollbar scrollbar-hide-x overflow-x-auto',
+          'gantt-scroll',
+          'gantt-table',
+        )}
+        ref={tableBoxRef}
+      >
         <div
           className={classNames('gantt-table-body', 'relative  z-0')}
           style={{
-            height: `max(${bodyHeight}px, ${visibleBodyHeight}px)`,
-            transform: `translateY(${totalHeaderHeight}px)`,
+            width: `max(${scrollWidth}px, 100%)`,
+            height: `max(${scrollBodyHeight}px, ${visibleBodyHeight}px)`,
           }}
         >
           {rowVirtualizer.getVirtualItems().map((virtualRow, index) => {
@@ -167,6 +193,6 @@ export const GanttTable = (props: GanttTableProps) => {
           })}
         </div>
       </div>
-    </div>
+    </>
   );
 };

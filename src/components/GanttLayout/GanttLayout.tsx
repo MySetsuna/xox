@@ -38,7 +38,7 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
   const [tableWidth, setTableWidth] = useState(300);
   const boxHeight = 700;
 
-  const flowBoxRef = useRef<HTMLDivElement>(null);
+  const scrollYBoxRef = useRef<HTMLDivElement>(null);
 
   const columnPinning = useMemo(() => {
     const tableColumnKeys = tableColumns.map<string>(({ id }) => id as string);
@@ -71,7 +71,7 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
 
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
-    getScrollElement: () => flowBoxRef.current,
+    getScrollElement: () => scrollYBoxRef.current,
     estimateSize: (index) => {
       const row = rows[index];
       if (isGroup) {
@@ -95,37 +95,40 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
   const leafHeaderGroupHeaders =
     visibleHeaderGroups[visibleHeaderGroups.length - 1]?.headers;
 
-  const totalHeaderHeight = useMemo(
-    () =>
-      visibleHeaderGroups.reduce((totalHeight, _headerGroup, index) => {
-        const height = headerHeight?.[index] || headerHeight?.[0] || rowHeight;
-        return totalHeight + height;
-      }, 0) + (showAlert ? alertHeight : 0),
-    [headerHeight, showAlert, alertHeight, rowHeight, visibleHeaderGroups],
-  );
+  // const totalHeaderHeight = useMemo(
+  //   () =>
+  //     visibleHeaderGroups.reduce((totalHeight, _headerGroup, index) => {
+  //       const height = headerHeight?.[index] || headerHeight?.[0] || rowHeight;
+  //       return totalHeight + height;
+  //     }, 0) + (showAlert ? alertHeight : 0),
+  //   [headerHeight, showAlert, alertHeight, rowHeight, visibleHeaderGroups],
+  // );
+  const totalHeaderHeight = 20;
 
   const visibleBodyHeight =
-    (flowBoxRef.current?.clientHeight ?? 0) - totalHeaderHeight;
+    (scrollYBoxRef.current?.clientHeight ?? 0) - totalHeaderHeight;
 
-  const ganttBodyHeight = data.length * rowHeight;
+  const scrollBodyHeight = data.length * rowHeight;
 
-  const scrollHeight =
-    ganttBodyHeight +
+  const scrollTotalHeight =
+    scrollBodyHeight +
     totalHeaderHeight +
     (hasLastGroupGap ? lastGroupGap ?? groupGap : 0);
+
+  console.log(totalHeaderHeight, 'totalHeaderHeight', scrollTotalHeight);
 
   const scrollWidth = table.getCenterTotalSize();
   const tableScrollWidth = table.getLeftTotalSize();
 
   return (
     <div
-      className={classNames('flex h-full', className)}
-      style={style}
-      ref={flowBoxRef}
+      className={classNames('flex h-full overflow-auto scrollbar', className)}
+      style={{ ...style, height: boxHeight }}
+      ref={scrollYBoxRef}
     >
       <ReactFlowProvider>
         <Resizable
-          size={{ width: tableWidth }}
+          size={{ width: tableWidth, height: scrollTotalHeight }}
           onResize={(_e, _d, element) => setTableWidth(element.offsetWidth)}
           minWidth={100}
           maxWidth={'80%'}
@@ -136,15 +139,16 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
             rows={rows}
             columns={tableColumns}
             headerHeight={headerHeight}
-            scrollHeight={scrollHeight}
+            boxHeight={boxHeight}
             scrollWidth={tableScrollWidth}
             headerGroups={tableHeaderGroups}
             rowHeight={rowHeight}
             visibleBodyHeight={visibleBodyHeight}
-            bodyHeight={flowBoxRef.current?.clientHeight ?? 0}
             groupGap={groupGap}
-            boxHeight={boxHeight}
+            scrollBodyHeight={scrollBodyHeight}
+            scrollTotalHeight={scrollTotalHeight}
             columnPinning={tableColumnPinning}
+            rowVirtualizer={rowVirtualizer}
           />
         </Resizable>
       </ReactFlowProvider>
