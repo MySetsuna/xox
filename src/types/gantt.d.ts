@@ -78,18 +78,6 @@ export type GroupOption<T, D = BaseGroupHeaderData> = {
   groupGanttComponent: FC<GroupGanttBarProps<T, D>>;
 };
 
-export enum GanttMode {
-  MonthDay,
-  WeekDay,
-  YearWeek,
-  YearMonth,
-  YearQuarter,
-}
-
-export enum GanttCustomMode {
-  CustomMode = 'CustomMode',
-}
-
 export type HeadRender<T> = {
   date?: (date: Dayjs) => ColumnDefTemplate<HeaderContext<T, unknown>>;
   week?: (
@@ -122,7 +110,12 @@ export type GanttAlertProps<T = unknown, AM = unknown, P = unknown> = {
   isShowAlertType: boolean;
 };
 
-export interface GanttAlertOptions<T = unknown, AM = unknown, TY = unknown, P = unknown> {
+export interface GanttAlertOptions<
+  T = unknown,
+  AM = unknown,
+  TY = unknown,
+  P = unknown,
+> {
   component?: (props: GanttAlertProps<T, AM>) => JSX.Element;
   elementProps?: HTMLAttributes<HTMLDivElement>;
   modeLastDayBorder?: CSSProperties['border'];

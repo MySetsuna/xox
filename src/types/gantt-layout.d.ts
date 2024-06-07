@@ -1,5 +1,6 @@
 import { CSSProperties } from 'react';
 import { ColumnDef, ColumnPinningState } from '@tanstack/react-table';
+import { Dayjs } from 'dayjs';
 
 export type GanttLayoutProps<T = unknown> = {
   data: T[];
@@ -20,4 +21,6 @@ export type GanttLayoutProps<T = unknown> = {
   showAlert?: boolean;
   alertHeight?: number;
   tableColumnPinning?: ColumnPinningState;
+  startAt: Dayjs;
+  endAt: Dayjs;
 };

@@ -1,4 +1,4 @@
-import { GanttLayoutProps } from '@/types';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   useReactTable,
   Column,
@@ -13,8 +13,64 @@ import { GanttTable } from '../GanttTable/GanttTable';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Resizable } from 're-resizable';
 import { ReactFlowProvider } from 'reactflow';
+import { WEEKDAY_MAP, buildGanttHeader } from '@/uitls/gantt';
+import { Dayjs } from 'dayjs';
+import { GanttLayoutProps } from '@/types';
+import { GanttMode } from '@/lib/module';
+import { Gantt } from '../Gantt/Gantt';
 
 type T = GanttLayoutProps['data'][0];
+
+const headerRenderer = {
+  date: (date: Dayjs) => {
+    return () => {
+      const day = date.get('day');
+      const dateStr = date.format('D');
+      return (
+        <div
+          title={date.format('YYYY-MM-DD')}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            whiteSpace: 'nowrap',
+            padding: '0 5px',
+          }}
+        >
+          <span>{dateStr}</span>
+          <span>{WEEKDAY_MAP[day]}</span>
+        </div>
+      );
+    };
+  },
+  month: (date: Dayjs) => {
+    return () => {
+      const month = date.get('month');
+      if (!month) {
+        return date.format('YYYY年M月');
+      }
+      return date.format('M月');
+    };
+  },
+  week: (date: Dayjs) => {
+    return () => {
+      // const end = date.add(6, 'day');
+      // const format =
+      //   end.get('year') !== date.get('year') ? 'YYYY-MM-DD' : 'MM-DD';
+
+      // return (
+      //   `${date.locale(timezone).weekYear()}年` +
+      //   ' ' +
+      //   `${date.locale(timezone).week()}周 ` +
+      //   `${date.format(format)}~${date.add(6, 'day').format(format)}`
+      // );
+      const month = date.get('month');
+      if (!month) {
+        return date.format('YYYY年M月D日');
+      }
+      return date.format('M月D日');
+    };
+  },
+};
 
 export const GanttLayout = memo((props: GanttLayoutProps) => {
   const {
@@ -31,9 +87,11 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
     hasLastGroupGap,
     lastGroupGap,
     showYearHeader = false,
-    showAlert = false,
-    alertHeight = 0,
+    // showAlert = false,
+    // alertHeight = 0,
     tableColumnPinning,
+    startAt,
+    endAt,
   } = props;
   const [tableWidth, setTableWidth] = useState(300);
   const boxHeight = 700;
@@ -49,9 +107,16 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
   }, [tableColumns]);
 
   const ganttColumns = useMemo(() => {
-    const ganttColumns: ColumnDef<T>[] = [];
+    const ganttColumns: ColumnDef<T>[] = buildGanttHeader(
+      GanttMode.MonthDay,
+      startAt,
+      endAt,
+      headerRenderer,
+      50,
+      true,
+    );
     return ganttColumns;
-  }, []);
+  }, [startAt, endAt]);
 
   const columns = useMemo(() => {
     return [...tableColumns, ...ganttColumns];
@@ -151,6 +216,7 @@ export const GanttLayout = memo((props: GanttLayoutProps) => {
             rowVirtualizer={rowVirtualizer}
           />
         </Resizable>
+        <Gantt columns={ganttColumns} headerGroups={ganttHeaderGroups} />
       </ReactFlowProvider>
     </div>
   );

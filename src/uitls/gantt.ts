@@ -1,10 +1,4 @@
 import dayjs, { Dayjs } from 'dayjs';
-import {
-  BufferMonths,
-  GanttCustomMode,
-  GanttMode,
-  HeadRender,
-} from './components/virtual-gantt';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { CSSProperties, Key } from 'react';
 import { Edge, MarkerType, Node } from 'reactflow';
@@ -14,8 +8,9 @@ import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import 'dayjs/locale/zh-cn';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import { GanttBarData, GanttNode, GroupGanttBarData, GroupOption } from '.';
 import { throttle } from 'lodash';
+import { GanttCustomMode, GanttMode } from '@/lib/module';
+import { BufferMonths, GanttBarData, GanttNode, GroupGanttBarData, GroupOption, HeadRender } from '@/types';
 dayjs.extend(advancedFormat);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
@@ -24,7 +19,7 @@ export interface GroupingRow<TData> {
   leafRows: Row<TData[]>;
   subRows: Row<TData[]>;
   groupingColumnId: string;
-  groupingValue: any;
+  groupingValue: unknown;
 }
 
 export type GanttHeaderBuilder = typeof buildGanttHeader;
@@ -46,10 +41,10 @@ export const buildGanttHeader = <T, M = GanttMode>(
   headRender?: HeadRender<T>,
   cellWidth = 50,
   isWeekStartMonday = true,
-): ColumnDef<any>[] => {
+): ColumnDef<unknown>[] => {
   const timezone = isWeekStartMonday ? 'zh-cn' : 'en';
   if (mode === GanttMode.MonthDay) {
-    const columns: ColumnDef<any>[] = [];
+    const columns: ColumnDef<unknown>[] = [];
     const startAtMonth = startAt.format('YYYY-MM');
     const startAtDateNumber = startAt.get('date');
     const endAtMonth = endAt.format('YYYY-MM');
@@ -60,7 +55,7 @@ export const buildGanttHeader = <T, M = GanttMode>(
       start = start.add(1, 'year')
     ) {
       const yearHeader = start.format('YYYY');
-      const monthColumns: ColumnDef<any>[] = [];
+      const monthColumns: ColumnDef<unknown>[] = [];
 
       const startMonth = start === startAt ? startAt : start.startOf('year');
       const endMonth =
@@ -77,7 +72,7 @@ export const buildGanttHeader = <T, M = GanttMode>(
 
         const startDateNumber = start0.startOf('month').get('date');
         const endDateNumber = start0.endOf('month').get('date');
-        const dateColumns: ColumnDef<any>[] = [];
+        const dateColumns: ColumnDef<unknown>[] = [];
         const beginNumber =
           startAtMonth === monthHeader ? startAtDateNumber : startDateNumber;
         const stopNumber =
@@ -107,7 +102,7 @@ export const buildGanttHeader = <T, M = GanttMode>(
     return columns;
   }
   if (GanttMode.WeekDay === mode) {
-    const columns: ColumnDef<any>[] = [];
+    const columns: ColumnDef<unknown>[] = [];
     const startAtWeekOfYear = startAt.locale(timezone).format('YYYY-w');
     const endAtWeekOfYear = endAt.locale(timezone).format('YYYY-w');
     for (
@@ -116,7 +111,7 @@ export const buildGanttHeader = <T, M = GanttMode>(
       start = start.add(1, 'year')
     ) {
       const yearHeader = start.format('YYYY');
-      const monthColumns: ColumnDef<any>[] = [];
+      const monthColumns: ColumnDef<unknown>[] = [];
 
       const startWeek = start === startAt ? startAt : start.startOf('year');
       const endWeek =
@@ -146,7 +141,7 @@ export const buildGanttHeader = <T, M = GanttMode>(
         if (startDateWeek.get('year') !== start.get('year')) {
           continue;
         }
-        const dateColumns: ColumnDef<any>[] = [];
+        const dateColumns: ColumnDef<unknown>[] = [];
         const begin =
           startAtWeekOfYear === weekHeader ? startAt : startDateWeek;
         const stop = endAtWeekOfYear === weekHeader ? endAt : endDateWeek;
@@ -159,7 +154,7 @@ export const buildGanttHeader = <T, M = GanttMode>(
           dateColumns.push({
             header:
               headRender?.date?.(start1) ||
-              `${start1.locale(timezone).weekday()}`,
+              `${start1.locale(timezone).week()}`,
             id,
             size: cellWidth,
           });
@@ -265,7 +260,7 @@ export const getNodes = <T>(
   isGroup?: (row: Row<T>) => boolean,
   hasFirstGroupGap?: boolean,
 ): GanttNode<T>[] => {
-  const nodes: Node<GanttBarData<T> | GroupGanttBarData<T, any>>[] = [];
+  const nodes: Node<GanttBarData<T> | GroupGanttBarData<T, unknown>>[] = [];
   virtualItems.forEach((virtualRow) => {
     /**
      * 
@@ -416,9 +411,9 @@ export const getEdges = throttle(
 
 export const onFitPosWhenResizeEnd = (
   cellWidth: number,
-  changedNode: GanttNode<any>,
+  changedNode: GanttNode<unknown>,
   originStartDate?: Dayjs,
-  callback?: (startAt: Dayjs, endAt: Dayjs, node: GanttNode<any>) => void,
+  callback?: (startAt: Dayjs, endAt: Dayjs, node: GanttNode<unknown>) => void,
 ) => {
   const changeNode = { ...changedNode };
   let newX = changeNode?.position.x ?? 0;

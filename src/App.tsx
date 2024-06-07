@@ -18,6 +18,7 @@ import { invoke } from '@tauri-apps/api';
 import { isTauri } from '@/uitls';
 import { GanttLayout } from './components/GanttLayout/GanttLayout';
 import { makeTask } from './examples/makeData';
+import dayjs from 'dayjs';
 
 const mdata = makeTask(50);
 export default function App() {
@@ -46,6 +47,8 @@ export default function App() {
       className="scrollbar"
     >
       <GanttLayout
+        startAt={dayjs('2024-4-5')}
+        endAt={dayjs('2024-6-5')}
         columns={[
           {
             id: 'index',
@@ -56,8 +59,14 @@ export default function App() {
                 {data.getValue<number>()}
               </div>
             ),
+            columns: [],
           },
-          { id: 'artStoryId', accessorKey: 'artStoryId', size: 80 },
+          {
+            id: 'artStoryId',
+            accessorKey: 'artStoryId',
+            size: 80,
+            columns: [],
+          },
           { id: 'startAt', accessorKey: 'startAt', size: 150 },
           { id: 'endAt', accessorKey: 'endAt', size: 150 },
           { id: 'handler', accessorKey: 'handler', size: 100 },

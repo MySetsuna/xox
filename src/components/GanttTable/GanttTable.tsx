@@ -65,6 +65,8 @@ export const GanttTable = (props: GanttTableProps) => {
                   const isRight = columnPinning.right?.includes(
                     header.column.id,
                   );
+                  console.log(headerGroup,'headerGroup');
+                  
                   return (
                     <div
                       key={header.id}
