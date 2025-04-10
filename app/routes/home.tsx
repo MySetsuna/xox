@@ -1,8 +1,11 @@
 import type { Route } from './+types/home';
 import { Welcome } from '../welcome/welcome';
 import { Outlet } from 'react-router';
+import { Sider } from 'app/components/sider/sider';
 
-export function meta() {
+export function meta(arg: Route.MetaArgs) {
+  console.log(arg, 'arg');
+
   return [
     { title: 'XoX Note' },
     {
@@ -17,7 +20,11 @@ export function meta() {
 }
 
 export default function Home() {
-  return <div>
-    <Outlet />
-  </div>;
+  return (
+    <div>
+      <header>头部，用户信息，系统设置，记事本</header>
+      <Sider />
+      <Outlet />
+    </div>
+  );
 }
