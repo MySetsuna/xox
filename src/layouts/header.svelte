@@ -1,59 +1,101 @@
 <script>
-    let notebookName = '';
+  import { onMount } from 'svelte';
 
-    function createNotebook() {
-        if (notebookName.trim()) {
-            alert(`Notebook "${notebookName}" created!`);
-            notebookName = '';
-        } else {
-            alert('Please enter a notebook name.');
-        }
-    }
+  let searchQuery = '';
+  let userMenuOpen = false;
+
+  const refreshPage = () => {
+    location.reload();
+  };
+
+  const toggleUserMenu = () => {
+    userMenuOpen = !userMenuOpen;
+  };
+
+  const changeLayoutMode = () => {
+    // Logic to toggle layout mode (e.g., light/dark mode)
+    document.body.classList.toggle('dark-mode');
+  };
+
+  const openSettings = () => {
+    // Logic to open system settings
+    alert('Open system settings');
+  };
 </script>
 
-<header class="app-header">
-    <h1>Notebook App</h1>
-    <div class="notebook-creator">
-        <input
-            type="text"
-            placeholder="Enter notebook name"
-            bind:value={notebookName}
-        />
-        <button on:click={createNotebook}>Create Notebook</button>
-    </div>
+<header>
+  <button on:click={openSettings} title="System Settings">⚙️</button>
+  <div class="search-bar">
+    <input type="text" placeholder="Search notes..." bind:value={searchQuery} />
+  </div>
+  <div class="actions">
+    <button on:click={refreshPage} title="Refresh">🔄</button>
+    <button on:click={changeLayoutMode} title="Change Layout Mode">🌓</button>
+    <a
+      class="user-avatar"
+      on:click={toggleUserMenu}
+      aria-expanded={userMenuOpen}
+      aria-haspopup="true"
+    >
+      <img src="/path/to/avatar.jpg" alt="User Avatar" width="32" height="32" />
+      <div class="user-menu {userMenuOpen ? 'open' : ''}">
+        <p>User Info</p>
+        <button on:click={() => alert('Open user settings')}
+          >User Settings</button
+        >
+      </div>
+    </a>
+  </div>
 </header>
 
 <style>
-    .app-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-        background-color: #6200ea;
-        color: white;
-    }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: var(--header-bg, #f8f9fa);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-    .notebook-creator {
-        display: flex;
-        gap: 0.5rem;
-    }
+  .search-bar {
+    flex-grow: 1;
+    max-width: 600px;
+    margin: 0 1rem;
+  }
 
-    input {
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+  .search-bar input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
 
-    button {
-        padding: 0.5rem 1rem;
-        background-color: #03dac6;
-        border: none;
-        border-radius: 4px;
-        color: white;
-        cursor: pointer;
-    }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 
-    button:hover {
-        background-color: #018786;
-    }
+  .user-avatar {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .user-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    display: none;
+  }
+
+  .user-menu.open {
+    display: block;
+  }
 </style>
