@@ -7,6 +7,7 @@
 
   let name = $state('');
   let greetMsg = $state('');
+  let curTab = $state('');
 
   // @ts-ignore
   async function greet(event) {
@@ -19,7 +20,7 @@
 <main class="container">
   <div class="layout">
     <aside class="sider">
-      <Sider />
+      <Sider curTab={curTab}/>
     </aside>
     <section class="content">
       <Header />
